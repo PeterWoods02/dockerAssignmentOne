@@ -1,7 +1,9 @@
+version: '3'
 networks:
    assignment-network:
-       external: true
-       name: 'mongo-network'
+     external: true
+     name: 'mongo-network'
+
 services:
   api:
     image: doconnor/movies-api:1.0
@@ -9,42 +11,46 @@ services:
     ports:
       - '9000:9000'
     environment:
-      - MONGODB_URI = mongodb://admin:secret@database:27017
-      - ENABLE_WRITING_HANDLERS = 'false'
+      - MONGODB_URI=mongodb://admin:secret@database:27017
+      - ENABLE_WRITING_HANDLERS=false
+      - REDIS_URI=redis://redis-server
     networks:
-       - assignment-network
+      - assignment-network
     depends_on:
-      - database 
+      - database
   
-  database: 
+  database:
     container_name: mongoDB
     image: mongo:8.0-rc
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=secret
     networks:
-       - assignment-network
+      - assignment-network
     volumes:    
       - moviedata:/data/db
 
   mongo-express:
-     container_name: express
-     image: mongo-express:1.0-20-alpine3.19
-     restart: always 
-     ports:
-       - 8080:8081
-     environment:
-       - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-       - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
-       - ME_CONFIG_MONGODB_SERVER=database  
-     networks:
-        - assignment-network
-     depends_on:
-       - database  
+    container_name: express
+    image: mongo-express:1.0-20-alpine3.19
+    restart: always
+    ports:
+      - '8080:8080'
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
+      - ME_CONFIG_MONGODB_SERVER=database
+    networks:
+      - assignment-network
+    depends_on:
+      - database
 
-
+  redis:
+    image: redis:alpine
+    container_name: redis-server 
+    networks:  
+      - assignment-network
+  
 
 volumes:
   moviedata:
-
-
