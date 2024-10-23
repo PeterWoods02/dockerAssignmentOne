@@ -18,6 +18,7 @@ services:
       - assignment-network
     depends_on:
       - database
+      - redis
   
   database:
     container_name: mongoDB
