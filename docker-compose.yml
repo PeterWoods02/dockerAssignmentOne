@@ -47,6 +47,8 @@ services:
       - database-network
     depends_on:
       - database
+    profiles:
+      - dev
 
   redis:
     image: redis:alpine
@@ -67,5 +69,7 @@ services:
       - database
     command:
       mongoimport --host database --db tmdb_movies --collection movies --authenticationDatabase admin --username ${MONGODB_USERNAME} --password ${MONGODB_PASSWORD} --drop --jsonArray --file /mongodb-init/seeding.json
+    profiles:
+      - dev
 volumes:
   moviedata:
